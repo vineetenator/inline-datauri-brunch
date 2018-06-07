@@ -76,10 +76,17 @@ module.exports = (function() {
 	// Convert images to base64 if less than specific size.
 	function getDataUri(mimetype, filePath) {
 		var useBase64 = false;
+		var ext = sysPath.extname(filePath);
 
 		// use base 64 unless it's an ASCII or UTF-8 format
 		var charset = mime.charsets.lookup(mimetype);
-		useBase64 = ['US-ASCII', 'UTF-8'].indexOf(charset) < 0;
+
+		if(ext == '.svg'){
+			mimetype += ';charset=UTF-8';
+		} else {
+			useBase64 = ['US-ASCII', 'UTF-8'].indexOf(charset) < 0;
+		}
+		
 		if (useBase64) { mimetype += ';base64'; }
 		try{
 			var buf = fs.readFileSync(filePath);
@@ -113,8 +120,13 @@ module.exports = (function() {
 	}
 
 	// Modify the arg data inorder to make image data to base64.
-	function parseImageUrls(fileAbsPath, data){
-		var result = data.match(pattern); // gives 'url(\'../assets/images/clock.svg\')'
+	function parseImageUrls(params){
+		if(opts.verbose !== 0 || !opts.hideErrors){
+			console.info('[optimized] -> %s', params.path);
+		}
+		var fileAbsPath =  sysPath.resolve(sysPath.dirname(params.path));
+		var data = params.data;
+		var result = data.match(pattern); 
 		var base64Data = data;
 
 		result.forEach(function(item){
@@ -129,7 +141,7 @@ module.exports = (function() {
 
 			if(/^(http|https):\/\//.test(path)){
 				if(opts.verbose == 2 || opts.verbose == MAX_VERBOSE_VAL){
-					console.info('Skipped data-uri as path is not relative %s', path);
+					console.info('Skipped data-uri as path is http/https %s', path);
 				} 
 				return;
 			}
@@ -140,10 +152,10 @@ module.exports = (function() {
 			if(!fs.existsSync(absPath)){
 				var newpath = sysPath.resolve(opts.baseLessDir, path);
 				if(fs.existsSync(newpath)){
-					absPath = sysPath.resolve(opts.baseLessDir, path);
+					absPath = newpath;
 				}else{
 					if(!opts.hideErrors){
-						console.info('Warn: Skipped, the file is not located at: %s',absPath);
+						console.info('[Warn] Skipped, the file is missing at: %s',absPath);
 					}
 					return;
 				}

@@ -27,8 +27,7 @@ module.exports = InlineDatauri = (function() {
 	};
 
 	InlineDatauri.prototype.optimize = function(params, callback) {
-		var myPath = sysPath.resolve(this.rootPath, sysPath.dirname(params.path));
-		var result = datauriProcessor.parseImageUrls(myPath, params.data);
+		var result = datauriProcessor.parseImageUrls(params);
 		
 		callback(null, { data: result});	
 	};
