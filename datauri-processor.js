@@ -184,7 +184,13 @@ module.exports = (function() {
 	}
 
 	function updateConfig(config){
-		Object.assign(opts, config);
+		if(typeof Object.assign === 'function'){
+			Object.assign(opts, config);
+		} else {
+			for(var x in opts){
+				if(config[x]) opts[x] = config[x];
+			}
+		}
 
 		if(opts.verbose > MAX_VERBOSE_VAL) {opts.verbose = MAX_VERBOSE_VAL;}
 		if(opts.verbose < 0) {opts.verbose = 0;}
