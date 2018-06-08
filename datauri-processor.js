@@ -135,7 +135,7 @@ module.exports = (function() {
 			var path = clean_url_value(raw_path); // '../assets/images/clock.svg'
 			var ext = sysPath.extname(path);
 			// Don't convert when path is already a data-uri  
-			if(/^data:image/.test(path) || !imgsExtns.includes(ext)){
+			if(/^data:image/.test(path) || (imgsExtns.indexOf(ext) == -1)){
 				return;
 			}
 
