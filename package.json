@@ -1,6 +1,6 @@
 {
 	"name": "inline-datauri-brunch",
-	"version": "1.0.3",
+	"version": "1.0.4",
 	"description": "Inline the resource images (png, jpg, svg) in url() to base64 data of the specific size.",
 	"author": "Vineet Arya",
 	"homepage": "https://github.com/vineetenator/inline-datauri-brunch",
