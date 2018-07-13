@@ -152,7 +152,7 @@ module.exports = (function() {
 			var absPath = sysPath.resolve(fileAbsPath, path); 
 
 			if(!fs.existsSync(absPath)){
-				var newpath = sysPath.resolve(opts.baseLessDir, path);
+				var newpath = sysPath.resolve(opts.altImageDir, path);
 				if(fs.existsSync(newpath)){
 					absPath = newpath;
 				}else{
