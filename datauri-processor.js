@@ -17,9 +17,11 @@ module.exports = (function() {
 		// 	3=Only converted,
 		//	4=All
 		verbose: 0,
-		baseLessDir: '.',
+		altImageDir: '.',
 		hideErrors:false,
-		maxSizeLimitInKb: 32
+		maxSizeLimitInKb: 32,
+		// Controls keeping quoting inside `url()`, incase of svg it will always keep quotes
+		urlQuotes: false
 	} 
 
 	// Map to store image data-uri's data 
@@ -122,7 +124,7 @@ module.exports = (function() {
 	// Modify the arg data inorder to make image data to base64.
 	function parseImageUrls(params){
 		if(opts.verbose !== 0 || !opts.hideErrors){
-			console.info('[optimized] -> %s', params.path);
+			console.info('[Embedding data URIs to] -> %s', params.path);
 		}
 		var fileAbsPath =  sysPath.resolve(sysPath.dirname(params.path));
 		var data = params.data;
@@ -131,7 +133,7 @@ module.exports = (function() {
 
 		result.forEach(function(item){
 			// Assuming image path is system path, not "http/https path"
-			var raw_path = item.replace(/url(?:\s*)\((?:\s*)[\'\"]?([^\)\']*)[\'\"]?(?:\s*)\)/, '$1');
+			var raw_path = item.replace(/url(?:\s*)\((?:\s*)[\'\"]?([^\)\'\"]*)[\'\"]?(?:\s*)\)/, '$1');
 			var path = clean_url_value(raw_path); // '../assets/images/clock.svg'
 			var ext = sysPath.extname(path);
 			// Don't convert when path is already a data-uri  
@@ -141,13 +143,13 @@ module.exports = (function() {
 
 			if(/^(http|https):\/\//.test(path)){
 				if(opts.verbose == 2 || opts.verbose == MAX_VERBOSE_VAL){
-					console.info('Skipped data-uri as path is http/https %s', path);
+					console.info('Skipped data-uri as path has http/https %s', path);
 				} 
 				return;
 			}
 
 			// Find absolute path in relation to the "*.less" file path 
-			var absPath = sysPath.resolve(fileAbsPath, path); // '/Users/vineetarya/instaedu/static/svg/images/clock.svg'
+			var absPath = sysPath.resolve(fileAbsPath, path); 
 
 			if(!fs.existsSync(absPath)){
 				var newpath = sysPath.resolve(opts.baseLessDir, path);
@@ -171,9 +173,10 @@ module.exports = (function() {
 				imagesDataMap[absPath].toSkipped = false; // Also upadted in getDataUri()
 				imagesDataMap[absPath].dataUri = getDataUri(mimeType, absPath);
 			}
-			// Don't replace url with base64 when it skipped.
+			// Don't replace url with base64 when it is marked to skipped.
 			if(!imagesDataMap[absPath].toSkipped){
-				base64Data = base64Data.replace(path, imagesDataMap[absPath].dataUri);
+				var quote = ('image/svg+xml' === imagesDataMap[absPath].mimeType || opts.urlQuotes) ? '\"' : '';
+				base64Data = base64Data.replace(item, "url("+ quote + imagesDataMap[absPath].dataUri + quote + ")");
 				if(opts.verbose == 3) {
 					console.info('Successfully converted %s', absPath);
 				}

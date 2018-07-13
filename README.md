@@ -7,10 +7,11 @@ Then, configure `inline-datauri-brunch` in the `plugins` section of your `brunch
 ```javascript
 plugins: {
     inlineDataUri: {
-        maxSizeLimitInKb: 4,
-        baseLessDir: 'static/css',
+        maxSizeLimitInKb: 4, // Max size of image file to be converted
+        altImageDir: 'static/css', // Alternate image directory relative to css files.
         verbose: 0,
-        hideErrors: false
+        hideErrors: false,
+        urlQuotes: false // Controls keeping quoting inside `url()`, incase of svg it will always keep quotes
     }
 }
 ```
