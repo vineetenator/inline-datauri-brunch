@@ -21,7 +21,7 @@
 	],
 	"dependencies": {
 		"progeny": "^0.5.2",
-		"mime": "~1.2.11"
+		"mime": "~1.4.1"
 	},
 	"devDependencies": {
 		"mocha": "^2.2.4"
