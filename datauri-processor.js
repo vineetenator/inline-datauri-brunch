@@ -176,7 +176,8 @@ module.exports = (function() {
 			// Don't replace url with base64 when it is marked to skipped.
 			if(!imagesDataMap[absPath].toSkipped){
 				var quote = ('image/svg+xml' === imagesDataMap[absPath].mimeType || opts.urlQuotes) ? '\"' : '';
-				base64Data = base64Data.replace(item, "url("+ quote + imagesDataMap[absPath].dataUri + quote + ")");
+				var urlComponent = "url("+ quote + imagesDataMap[absPath].dataUri + quote + ")";
+                base64Data = base64Data.replace(item, urlComponent);
 				if(opts.verbose == 3) {
 					console.info('Successfully converted %s', absPath);
 				}
